@@ -1,0 +1,94 @@
+<html>
+    <head>
+        <title>Fetching Universities From API</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <center><h1><u>List of Indian Universities</u></h1></center>
+        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for University Name"><br><br>
+        <center><table id="table" class="main" style="width:100%">
+            
+            <thead id="thead">
+              <tr>
+                <th>State Province</th>
+                <th>Web Pages</th>
+                <th>Country</th>
+                <th>Name</th>
+                <th>Domains</th>
+              </tr>
+            </thead>
+           
+            
+          </table></center>
+    </body>
+</html>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js">
+
+</script>
+<script>
+    $(document).ready(function()
+    {
+        $.ajax({
+            type: 'GET',
+            url:'http://universities.hipolabs.com/search?country=India',
+            dataType:'JSON',
+            success: function(data)
+            {
+                data.sort((a, b) => 
+                {
+                    const nameA = a.name.toUpperCase(); //ignore upper and lower case
+                    //console.log(nameA);
+                    const nameB = b.name.toUpperCase(); //ignore upper and lower case
+                    //console.log(nameB);
+                    if (nameA < nameB) 
+                    {
+                        return -1;
+                    }
+                    else 
+                    {
+                        return 1;
+                    }
+                    
+                });
+                for (var i=0; i<data.length; i++) 
+                {
+                    var row = $('<tr><td>' + data[i]['state-province'] + '</td><td>' + data[i].web_pages + '</td><td>' + data[i].country + '</td><td>' + data[i].name + '</td><td>' + data[i].domains + '</td></tr>');
+                    $('#table').append(row);
+					
+                }
+            },
+            error: function(error)
+            {
+                console.log('Error 404');
+            }
+        })
+    })
+</script>
+<script>
+    function myFunction() {
+      // Declare variables
+      var input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("myInput"); //Fetch Elements By Id
+      filter = input.value.toUpperCase(); //ignore upper and lower case
+      table = document.getElementById("table");//Fetch Elements By Id
+      tr = table.getElementsByTagName("tr");//Fetch Elements By Tag Name
+    
+      // Loop through all table rows, and hide those who don't match the search query
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[3]; //Search For name index[0]
+        
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+    </script>
+    
+</body>
